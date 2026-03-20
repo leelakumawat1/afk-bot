@@ -9,7 +9,7 @@ app.listen(PORT);
 
 function createBot() {
   const bot = mineflayer.createBot({
-    host: "Novasmpmc",
+    host: "Novasmpmc.aternos.me",
     port: 21729,
     username: "AFK_BOT",
     version: false
