@@ -2,7 +2,7 @@ const mineflayer = require('mineflayer');
 const express = require('express');
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 4000;
 
 app.get('/', (req, res) => res.send('Bot is running'));
 app.listen(PORT, () => console.log("Web server running"));
