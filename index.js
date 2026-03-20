@@ -27,49 +27,45 @@ function createBot() {
   // ✅ SPAWN
   // =========================
   bot.once('spawn', () => {
-    console.log("🤖 Bot joined the server");
+  console.log("🤖 Bot joined");
 
-    // 🔥 Anti GriefPrevention (move first)
-    bot.setControlState('forward', true);
-    setTimeout(() => bot.setControlState('forward', false), 2000);
+  // 🔥 FIRST MOVE (very important)
+  bot.setControlState('forward', true);
+  setTimeout(() => bot.setControlState('forward', false), 2000);
 
-    // =========================
-    // 🧠 HUMAN-LIKE LOOP
-    // =========================
-    setInterval(() => {
-      try {
+  // =========================
+  // 🔄 MAIN LOOP (movement + look)
+  // =========================
+  setInterval(() => {
+    try {
 
-        // 👀 SMOOTH LOOK (realistic)
-        const yaw = bot.entity.yaw + (Math.random() - 0.5);
-        const pitch = Math.max(
-          -1.5,
-          Math.min(1.5, bot.entity.pitch + (Math.random() - 0.5))
-        );
-        bot.look(yaw, pitch, true);
+      // 👀 LOOK
+      const yaw = Math.random() * Math.PI * 2;
+      const pitch = Math.random() * 1.2 - 0.6;
+      bot.look(yaw, pitch, true);
 
-        // 🚶 RANDOM MOVEMENT
-        const actions = ['forward', 'back', 'left', 'right'];
-        const action = actions[Math.floor(Math.random() * actions.length)];
+      // 🚶 MOVE
+      const actions = ['forward', 'back', 'left', 'right'];
+      const action = actions[Math.floor(Math.random() * actions.length)];
 
-        bot.setControlState(action, true);
+      bot.setControlState(action, true);
 
-        setTimeout(() => {
-          bot.setControlState(action, false);
-        }, 1000 + Math.random() * 1000);
+      setTimeout(() => {
+        bot.setControlState(action, false);
+      }, 1500);
 
-        // 🦘 RANDOM JUMP
-        if (Math.random() < 0.3) {
-          bot.setControlState('jump', true);
-          setTimeout(() => bot.setControlState('jump', false), 300);
-        }
-
-      } catch (err) {
-        console.log("Loop error:", err.message);
+      // 🦘 JUMP
+      if (Math.random() < 0.4) {
+        bot.setControlState('jump', true);
+        setTimeout(() => bot.setControlState('jump', false), 400);
       }
 
-    }, 5000); // 🔥 optimized timing
+    } catch (err) {
+      console.log("Loop error:", err.message);
+    }
 
-  });
+  }, 5000);
+});
 
   // =========================
   // 🔁 AUTO RECONNECT (SAFE)
