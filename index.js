@@ -9,13 +9,12 @@ app.listen(PORT, () => console.log("Web server running"));
 
 function createBot() {
 
-const bot = mineflayer.createBot({
-  host: "Novasmpmc.aternos.me",
-  port: 21729,
-  username: "AFK_BOT",
-  version: "1.20.1", // 🔥 FIX
-  auth: "offline" // 🔥 ADD THIS
-});
+  const bot = mineflayer.createBot({
+    host: "Novasmpmc.aternos.me", // 👈 CHANGE THIS
+    port: 21729,
+    username: "AFK_BOT",
+    version: false
+  });
 
   // =========================
   // ✅ LOGIN CONFIRM
@@ -28,45 +27,49 @@ const bot = mineflayer.createBot({
   // ✅ SPAWN
   // =========================
   bot.once('spawn', () => {
-  console.log("🤖 Bot joined");
+    console.log("🤖 Bot joined the server");
 
-  // 🔥 FIRST MOVE (very important)
-  bot.setControlState('forward', true);
-  setTimeout(() => bot.setControlState('forward', false), 2000);
+    // 🔥 Anti GriefPrevention (move first)
+    bot.setControlState('forward', true);
+    setTimeout(() => bot.setControlState('forward', false), 2000);
 
-  // =========================
-  // 🔄 MAIN LOOP (movement + look)
-  // =========================
-  setInterval(() => {
-    try {
+    // =========================
+    // 🧠 HUMAN-LIKE LOOP
+    // =========================
+    setInterval(() => {
+      try {
 
-      // 👀 LOOK
-      const yaw = Math.random() * Math.PI * 2;
-      const pitch = Math.random() * 1.2 - 0.6;
-      bot.look(yaw, pitch, true);
+        // 👀 SMOOTH LOOK (realistic)
+        const yaw = bot.entity.yaw + (Math.random() - 0.5);
+        const pitch = Math.max(
+          -1.5,
+          Math.min(1.5, bot.entity.pitch + (Math.random() - 0.5))
+        );
+        bot.look(yaw, pitch, true);
 
-      // 🚶 MOVE
-      const actions = ['forward', 'back', 'left', 'right'];
-      const action = actions[Math.floor(Math.random() * actions.length)];
+        // 🚶 RANDOM MOVEMENT
+        const actions = ['forward', 'back', 'left', 'right'];
+        const action = actions[Math.floor(Math.random() * actions.length)];
 
-      bot.setControlState(action, true);
+        bot.setControlState(action, true);
 
-      setTimeout(() => {
-        bot.setControlState(action, false);
-      }, 1500);
+        setTimeout(() => {
+          bot.setControlState(action, false);
+        }, 1000 + Math.random() * 1000);
 
-      // 🦘 JUMP
-      if (Math.random() < 0.4) {
-        bot.setControlState('jump', true);
-        setTimeout(() => bot.setControlState('jump', false), 400);
+        // 🦘 RANDOM JUMP
+        if (Math.random() < 0.3) {
+          bot.setControlState('jump', true);
+          setTimeout(() => bot.setControlState('jump', false), 300);
+        }
+
+      } catch (err) {
+        console.log("Loop error:", err.message);
       }
 
-    } catch (err) {
-      console.log("Loop error:", err.message);
-    }
+    }, 5000); // 🔥 optimized timing
 
-  }, 5000);
-});
+  });
 
   // =========================
   // 🔁 AUTO RECONNECT (SAFE)
