@@ -1,57 +1,57 @@
 const mineflayer = require('mineflayer');
 const express = require('express');
+const dns = require('dns');
+
+// 🔥 FORCE DNS (important for Render)
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.get('/', (req, res) => res.send('Bot is running'));
-app.listen(PORT, () => console.log("Web server running"));
+app.listen(PORT, () => console.log("🌐 Web server running"));
 
 function createBot() {
 
+  console.log("🚀 Starting bot...");
+
   const bot = mineflayer.createBot({
-    host: "Novasmpmc.aternos.me",
-    port: 21729,
+    host: "Novasmpmc.aternos.me", // ✅ only domain
     username: "AFK_BOT",
     version: false,
-    auth: "offline" // 🔥 IMPORTANT FOR CRACKED
+    auth: "offline",
+    connectTimeout: 30000 // 🔥 increase timeout
   });
 
   // =========================
-  // ✅ LOGIN CONFIRM
+  // LOGIN EVENT
   // =========================
   bot.on('login', () => {
     console.log("✅ Logged in");
   });
 
   // =========================
-  // ✅ SPAWN
+  // SPAWN
   // =========================
   bot.once('spawn', () => {
-    console.log("🤖 Bot joined");
+    console.log("🤖 Bot joined server");
 
-    // =========================
-    // 🔐 AUTHME (REGISTER + LOGIN)
-    // =========================
-    const password = "123456"; // 👈 change kar sakta hai
+    const password = "123456";
 
+    // 🔐 AUTHME FIX
     setTimeout(() => {
       bot.chat(`/register ${password} ${password}`);
-    }, 3000);
+    }, 4000);
 
     setTimeout(() => {
       bot.chat(`/login ${password}`);
-    }, 6000);
+    }, 7000);
 
-    // =========================
-    // 🚶 FIRST MOVE (anti mute)
-    // =========================
+    // 🚶 FIRST MOVE (important)
     bot.setControlState('forward', true);
     setTimeout(() => bot.setControlState('forward', false), 2000);
 
-    // =========================
-    // 🤖 ANTI AFK SYSTEM (STABLE)
-    // =========================
+    // 🤖 ANTI AFK LOOP
     setInterval(() => {
       try {
 
@@ -71,7 +71,7 @@ function createBot() {
         }, 1000);
 
         // 🦘 JUMP
-        if (Math.random() < 0.4) {
+        if (Math.random() < 0.3) {
           bot.setControlState('jump', true);
           setTimeout(() => bot.setControlState('jump', false), 300);
         }
@@ -80,30 +80,30 @@ function createBot() {
         console.log("Loop error:", err.message);
       }
 
-    }, 7000); // 🔥 slow = stable
+    }, 8000); // 🔥 slower = more stable
 
   });
 
   // =========================
-  // 🔁 AUTO RECONNECT (SAFE)
+  // RECONNECT SYSTEM
   // =========================
   bot.on('end', () => {
-    console.log("❌ Disconnected → Reconnecting...");
-    setTimeout(createBot, 20000); // 🔥 important delay
+    console.log("❌ Disconnected → retry in 30s");
+    setTimeout(createBot, 30000); // 🔥 important delay
   });
 
   // =========================
-  // ⚠️ ERRORS
+  // ERRORS
   // =========================
   bot.on('kicked', (reason) => {
     console.log("⚠️ Kicked:", reason);
   });
 
   bot.on('error', (err) => {
-    console.log("❌ Error:", err.message);
+    console.log("❌ Error:", err.code || err.message);
   });
 
 }
 
-// 🚀 START
+// START
 createBot();
