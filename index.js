@@ -5,43 +5,105 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.get('/', (req, res) => res.send('Bot is running'));
-app.listen(PORT);
+app.listen(PORT, () => console.log("Web server running"));
 
 function createBot() {
+
   const bot = mineflayer.createBot({
     host: "Novasmpmc.aternos.me",
     port: 21729,
     username: "AFK_BOT",
-    version: false
+    version: false,
+    auth: "offline" // 🔥 IMPORTANT FOR CRACKED
   });
 
-  bot.once('spawn', () => {
-    console.log("Bot joined");
+  // =========================
+  // ✅ LOGIN CONFIRM
+  // =========================
+  bot.on('login', () => {
+    console.log("✅ Logged in");
+  });
 
-    // move once (fix griefprevention)
+  // =========================
+  // ✅ SPAWN
+  // =========================
+  bot.once('spawn', () => {
+    console.log("🤖 Bot joined");
+
+    // =========================
+    // 🔐 AUTHME (REGISTER + LOGIN)
+    // =========================
+    const password = "123456"; // 👈 change kar sakta hai
+
+    setTimeout(() => {
+      bot.chat(`/register ${password} ${password}`);
+    }, 3000);
+
+    setTimeout(() => {
+      bot.chat(`/login ${password}`);
+    }, 6000);
+
+    // =========================
+    // 🚶 FIRST MOVE (anti mute)
+    // =========================
     bot.setControlState('forward', true);
     setTimeout(() => bot.setControlState('forward', false), 2000);
 
-    // anti afk
+    // =========================
+    // 🤖 ANTI AFK SYSTEM (STABLE)
+    // =========================
     setInterval(() => {
-      const actions = ['forward', 'back', 'left', 'right'];
-      const action = actions[Math.floor(Math.random() * actions.length)];
+      try {
 
-      bot.setControlState(action, true);
-      setTimeout(() => bot.setControlState(action, false), 1000);
+        // 👀 LOOK
+        const yaw = Math.random() * Math.PI * 2;
+        const pitch = Math.random() * 1.2 - 0.6;
+        bot.look(yaw, pitch, true);
 
-      bot.setControlState('jump', true);
-      setTimeout(() => bot.setControlState('jump', false), 300);
+        // 🚶 MOVE
+        const actions = ['forward', 'back', 'left', 'right'];
+        const action = actions[Math.floor(Math.random() * actions.length)];
 
-    }, 5000);
+        bot.setControlState(action, true);
+
+        setTimeout(() => {
+          bot.setControlState(action, false);
+        }, 1000);
+
+        // 🦘 JUMP
+        if (Math.random() < 0.4) {
+          bot.setControlState('jump', true);
+          setTimeout(() => bot.setControlState('jump', false), 300);
+        }
+
+      } catch (err) {
+        console.log("Loop error:", err.message);
+      }
+
+    }, 7000); // 🔥 slow = stable
+
   });
 
+  // =========================
+  // 🔁 AUTO RECONNECT (SAFE)
+  // =========================
   bot.on('end', () => {
-    console.log("Reconnecting...");
-    setTimeout(createBot, 15000);
+    console.log("❌ Disconnected → Reconnecting...");
+    setTimeout(createBot, 20000); // 🔥 important delay
   });
 
-  bot.on('error', err => console.log(err));
+  // =========================
+  // ⚠️ ERRORS
+  // =========================
+  bot.on('kicked', (reason) => {
+    console.log("⚠️ Kicked:", reason);
+  });
+
+  bot.on('error', (err) => {
+    console.log("❌ Error:", err.message);
+  });
+
 }
 
+// 🚀 START
 createBot();
